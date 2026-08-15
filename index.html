@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Identify Music By Shikaku Iyayn ajah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1767884046527.jpeg?format=png&name=900x900">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {}
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        body, html {
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .audio-player {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .audio-player.dark {
+            background: linear-gradient(135deg, #4c51bf 0%, #2d3748 100%);
+        }
+
+        .dark-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .dark-scrollbar::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .dark-scrollbar::-webkit-scrollbar-thumb {
+            background: #444444;
+            border-radius: 4px;
+        }
+
+        .dark-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555555;
+        }
+
+        .light-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .light-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .light-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .light-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .card-glow {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-glow:hover {
+            transform: translateY(-5px);
+        }
+
+        .dark-card:hover {
+            box-shadow: 0 20px 30px rgba(255, 255, 255, 0.05);
+        }
+
+        .light-card:hover {
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-body {
+            background-color: #000000 !important;
+        }
+
+        .light-body {
+            background-color: #f9fafb !important;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+            height: 6px;
+            border-radius: 3px;
+        }
+
+        input[type="range"]::-webkit-slider-track {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            height: 6px;
+        }
+
+        input[type="range"]::-moz-range-track {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            height: 6px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: white;
+            margin-top: -6px;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+        }
+
+        .file-name-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+            width: 100%;
+        }
+
+        .file-name-wrapper {
+            word-break: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            max-width: 100%;
+        }
+
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid;
+        }
+
+        .light-mode .social-btn {
+            background-color: #f8fafc;
+            border-color: #e2e8f0;
+            color: #334155;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .light-mode .social-btn:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .social-btn {
+            background-color: #1e293b;
+            border-color: #334155;
+            color: #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .dark-mode .social-btn:hover {
+            background-color: #334155;
+            border-color: #475569;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div class="fixed top-4 right-4 z-50">
+        <button id="theme-toggle" type="button" 
+            class="p-3 rounded-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white 
+                   hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300 
+                   focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500
+                   shadow-lg border border-gray-200 dark:border-gray-700">
+            <svg id="theme-toggle-dark-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+            </svg>
+            <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+            </svg>
+        </button>
+    </div>
+
+    <div class="flex flex-col items-center justify-center min-h-screen p-4">
+        <div class="mb-8 text-center">
+            <img src="https://raw.githubusercontent.com/upload-file-lab/fileupload7/main/uploads/1767888533003.png" 
+                 class="rounded-lg shadow-lg mx-auto max-w-[200px] h-auto" 
+                 alt="Upload Audio Logo">
+        </div>
+
+        <div id="main-card"
+             class="w-full max-w-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 
+                    rounded-xl shadow-xl p-6 card-glow">
+            <h1 class="text-2xl font-extrabold text-center mb-4 text-gray-900 dark:text-white">Identify music and get the title of the music.</h1>     
+            <p class="text-center mb-4 text-gray-600 dark:text-gray-300 text-sm">
+                Format: MP3, WAV, OGG, M4A, AAC, FLAC
+                <br>
+                Max: <span class="font-semibold text-gray-900 dark:text-white">4.5 MB</span>
+            </p>
+
+            <form ref="uploadForm" id="uploadForm" action="/identify" method="post" encType="multipart/form-data" class="space-y-4">
+                <div id="file-drop-area" 
+                     class="border-2 border-dashed rounded-xl p-4 text-center cursor-pointer
+                            border-gray-300 dark:border-gray-600 
+                            bg-gray-50 dark:bg-gray-900
+                            hover:bg-gray-100 dark:hover:bg-gray-700
+                            transition duration-300">
+                    <div class="flex flex-col items-center justify-center">
+                        <svg class="w-10 h-10 mb-2 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                        </svg>
+                    </div>
+                    <input type="file" name="file" id="fileInput" class="hidden" accept="audio/*" />
+                </div>
+
+                <div id="preview-area" class="hidden">
+                    <div id="preview-content" 
+                         class="border border-gray-200 dark:border-gray-600 rounded-xl p-4 bg-gray-50 dark:bg-gray-900">
+                    </div>
+                    <div class="mt-3 file-name-container">
+                        <div class="w-full flex justify-between items-start">
+                            <div class="file-name-wrapper">
+                                <span id="file-name" class="font-medium text-gray-900 dark:text-white text-sm"></span>
+                            </div>
+                            <button type="button" id="remove-file" 
+                                    class="px-3 py-1 rounded text-xs font-medium whitespace-nowrap flex-shrink-0 ml-2
+                                           bg-red-100 dark:bg-red-900/30 
+                                           text-red-700 dark:text-red-300
+                                           hover:bg-red-200 dark:hover:bg-red-800/50
+                                           transition duration-300">
+                                Delete
+                            </button>
+                        </div>
+                        <div id="file-info" class="text-xs text-gray-500 dark:text-gray-400 mt-1"></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-center items-center space-x-3 mt-4">
+                    <button type="button" id="uploadButton" 
+                            class="px-6 py-2.5 rounded-full font-bold shadow-lg
+                                   bg-gray-100 dark:bg-gray-700/70
+                                   text-gray-800 dark:text-gray-200
+                                   hover:bg-gray-200 dark:hover:bg-gray-600/70
+                                   disabled:opacity-50 disabled:cursor-not-allowed
+                                   transition duration-300
+                                   focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600
+                                   transform hover:scale-105 text-sm border border-gray-300 dark:border-gray-600">
+                        Identify
+                    </button>
+                    <div id="loadingIndicator" class="hidden">
+                        <svg class="animate-spin h-5 w-5 text-gray-900 dark:text-white" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </form>
+
+            <section id="social" class="mt-12 pt-8 border-t border-gray-300 dark:border-gray-700">
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="https://github.com/iyayn-ajah" target="_blank" 
+                       class="px-5 py-3 rounded-lg font-medium transition-all duration-300 
+                              bg-gray-100 dark:bg-gray-800 
+                              border border-gray-200 dark:border-gray-700 
+                              text-gray-800 dark:text-gray-200
+                              hover:bg-gray-200 dark:hover:bg-gray-700
+                              hover:shadow-md dark:hover:shadow-gray-800/50">
+                        GitHub
+                    </a>
+                    <a href="https://t.me/AfiqAjah" target="_blank" 
+                       class="px-5 py-3 rounded-lg font-medium transition-all duration-300 
+                              bg-gray-100 dark:bg-gray-800 
+                              border border-gray-200 dark:border-gray-700 
+                              text-gray-800 dark:text-gray-200
+                              hover:bg-gray-200 dark:hover:bg-gray-700
+                              hover:shadow-md dark:hover:shadow-gray-800/50">
+                        Telegram
+                    </a>
+                    <a href="https://whatsapp.com/channel/0029VaoJb11LikgEpNpBty0e" target="_blank" 
+                       class="px-5 py-3 rounded-lg font-medium transition-all duration-300 
+                              bg-gray-100 dark:bg-gray-800 
+                              border border-gray-200 dark:border-gray-700 
+                              text-gray-800 dark:text-gray-200
+                              hover:bg-gray-200 dark:hover:bg-gray-700
+                              hover:shadow-md dark:hover:shadow-gray-800/50">
+                        WhatsApp
+                    </a>
+                    <a href="https://www.instagram.com/iyayn_ajah/" target="_blank" 
+                       class="px-5 py-3 rounded-lg font-medium transition-all duration-300 
+                              bg-gray-100 dark:bg-gray-800 
+                              border border-gray-200 dark:border-gray-700 
+                              text-gray-800 dark:text-gray-200
+                              hover:bg-gray-200 dark:hover:bg-gray-700
+                              hover:shadow-md dark:hover:shadow-gray-800/50">
+                        Instagram
+                    </a>
+                    <a href="https://www.youtube.com/@shikaku-doang" target="_blank" 
+                       class="px-5 py-3 rounded-lg font-medium transition-all duration-300 
+                              bg-gray-100 dark:bg-gray-800 
+                              border border-gray-200 dark:border-gray-700 
+                              text-gray-800 dark:text-gray-200
+                              hover:bg-gray-200 dark:hover:bg-gray-700
+                              hover:shadow-md dark:hover:shadow-gray-800/50">
+                        YouTube
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        const htmlElement = document.documentElement;
+        const bodyElement = document.body;
+        const fileDropArea = document.getElementById('file-drop-area');
+        const fileInput = document.getElementById('fileInput');
+        const previewArea = document.getElementById('preview-area');
+        const previewContent = document.getElementById('preview-content');
+        const fileNameSpan = document.getElementById('file-name');
+        const fileInfoDiv = document.getElementById('file-info');
+        const removeFileBtn = document.getElementById('remove-file');
+        const uploadButton = document.getElementById('uploadButton');
+        const uploadForm = document.getElementById('uploadForm');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const mainCard = document.getElementById('main-card');
+
+        let selectedFile = null;
+        let audioElement = null;
+        let isAudioPlaying = false;
+
+        function setTheme(isDark) {
+            if (isDark) {
+                htmlElement.classList.add('dark');
+                bodyElement.classList.add('dark-body');
+                bodyElement.classList.remove('light-body');
+                localStorage.setItem('theme', 'dark');
+
+                themeToggleDarkIcon.classList.remove('hidden');
+                themeToggleLightIcon.classList.add('hidden');
+
+                mainCard.classList.add('dark-card');
+                mainCard.classList.remove('light-card');
+
+                bodyElement.classList.add('dark-mode');
+                bodyElement.classList.remove('light-mode');
+            } else {
+                htmlElement.classList.remove('dark');
+                bodyElement.classList.remove('dark-body');
+                bodyElement.classList.add('light-body');
+                localStorage.setItem('theme', 'light');
+
+                themeToggleDarkIcon.classList.add('hidden');
+                themeToggleLightIcon.classList.remove('hidden');
+
+                mainCard.classList.add('light-card');
+                mainCard.classList.remove('dark-card');
+
+                bodyElement.classList.add('light-mode');
+                bodyElement.classList.remove('dark-mode');
+            }
+
+            updateScrollbarClass();
+        }
+
+        function updateScrollbarClass() {
+            const isDark = htmlElement.classList.contains('dark');
+            if (isDark) {
+                bodyElement.classList.remove('light-scrollbar');
+                bodyElement.classList.add('dark-scrollbar');
+            } else {
+                bodyElement.classList.remove('dark-scrollbar');
+                bodyElement.classList.add('light-scrollbar');
+            }
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (savedTheme === 'dark') {
+                setTheme(true);
+            } else if (savedTheme === 'light') {
+                setTheme(false);
+            } else {
+                if (systemPrefersDark) {
+                    setTheme(true);
+                } else {
+                    setTheme(false);
+                }
+            }
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            const isDark = htmlElement.classList.contains('dark');
+            setTheme(!isDark);
+        });
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            else return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+
+        function truncateFileName(name, maxLength = 30) {
+            if (name.length <= maxLength) return name;
+            const extension = name.split('.').pop();
+            const nameWithoutExt = name.substring(0, name.length - extension.length - 1);
+            const truncated = nameWithoutExt.substring(0, maxLength - extension.length - 4) + '...';
+            return truncated + '.' + extension;
+        }
+
+        function showAudioPreview(file) {
+            selectedFile = file;
+            previewArea.classList.remove('hidden');
+            previewArea.classList.add('fade-in');
+
+            fileNameSpan.textContent = file.name;
+            fileInfoDiv.textContent = `${formatFileSize(file.size)} • ${file.type.split('/')[1].toUpperCase() || 'AUDIO'}`;
+            previewContent.innerHTML = '';
+
+            const audioURL = URL.createObjectURL(file);
+            const audioPlayer = document.createElement('div');
+            audioPlayer.className = 'audio-player ' + (htmlElement.classList.contains('dark') ? 'dark' : 'light');
+
+            audioPlayer.innerHTML = `
+                <div class="flex items-center mb-3">
+                    <div class="flex-shrink-0 mr-3">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <p class="text-sm font-medium text-white break-words">${truncateFileName(file.name, 25)}</p>
+                        <p class="text-xs text-white/80">${formatFileSize(file.size)}</p>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <input type="range" id="progress-bar" class="w-full" value="0" min="0" max="100" step="0.1">
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <button id="play-btn" type="button" class="p-2 rounded-full bg-white text-purple-600 hover:bg-gray-100 transition">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                        <span id="current-time" class="text-xs text-white">0:00</span>
+                    </div>
+                    <span id="duration" class="text-xs text-white">0:00</span>
+                </div>
+            `;
+
+            previewContent.appendChild(audioPlayer);
+
+            audioElement = new Audio(audioURL);
+            isAudioPlaying = false;
+
+            audioElement.addEventListener('loadedmetadata', () => {
+                const durationSpan = audioPlayer.querySelector('#duration');
+                durationSpan.textContent = formatTime(audioElement.duration);
+            });
+
+            audioElement.addEventListener('timeupdate', () => {
+                const progressBar = audioPlayer.querySelector('#progress-bar');
+                const currentTimeSpan = audioPlayer.querySelector('#current-time');
+
+                const progress = (audioElement.currentTime / audioElement.duration) * 100 || 0;
+                progressBar.value = progress;
+                currentTimeSpan.textContent = formatTime(audioElement.currentTime);
+            });
+
+            audioElement.addEventListener('ended', () => {
+                const playBtn = audioPlayer.querySelector('#play-btn');
+                playBtn.innerHTML = `
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                    </svg>
+                `;
+                isAudioPlaying = false;
+            });
+
+            audioElement.addEventListener('play', () => {
+                isAudioPlaying = true;
+            });
+
+            audioElement.addEventListener('pause', () => {
+                isAudioPlaying = false;
+            });
+
+            const playBtn = audioPlayer.querySelector('#play-btn');
+            playBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (audioElement.paused) {
+                    audioElement.play();
+                    playBtn.innerHTML = `
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                    `;
+                } else {
+                    audioElement.pause();
+                    playBtn.innerHTML = `
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                        </svg>
+                    `;
+                }
+            });
+
+            const progressBar = audioPlayer.querySelector('#progress-bar');
+            progressBar.addEventListener('input', (e) => {
+                e.stopPropagation();
+                const seekTime = (e.target.value / 100) * audioElement.duration;
+                audioElement.currentTime = seekTime;
+            });
+
+            audioPlayer.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            uploadButton.disabled = false;
+        }
+
+        fileDropArea.addEventListener('click', () => fileInput.click());
+
+        fileDropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileDropArea.classList.add('bg-gray-200', 'dark:bg-gray-700');
+        });
+
+        fileDropArea.addEventListener('dragleave', () => {
+            fileDropArea.classList.remove('bg-gray-200', 'dark:bg-gray-700');
+        });
+
+        fileDropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            fileDropArea.classList.remove('bg-gray-200', 'dark:bg-gray-700');
+
+            if (e.dataTransfer.files.length) {
+                const file = e.dataTransfer.files[0];
+
+                if (!file.type.startsWith('audio/')) {
+                    alert('Only audio files are allowed! (MP3, WAV, OGG, M4A, AAC, FLAC)');
+                    return;
+                }
+
+                if (file.size > 4.5 * 1024 * 1024) {
+                    alert('File too large! Maximum 4.5 MB');
+                    return;
+                }
+
+                fileInput.files = e.dataTransfer.files;
+                showAudioPreview(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                const file = e.target.files[0];
+
+                if (!file.type.startsWith('audio/')) {
+                    alert('Only audio files are allowed! (MP3, WAV, OGG, M4A, AAC, FLAC)');
+                    fileInput.value = '';
+                    return;
+                }
+
+                if (file.size > 4.5 * 1024 * 1024) {
+                    alert('File too large! Maximum 4.5 MB');
+                    fileInput.value = '';
+                    return;
+                }
+
+                showAudioPreview(file);
+            }
+        });
+
+        removeFileBtn.addEventListener('click', () => {
+            if (audioElement && !audioElement.paused) {
+                audioElement.pause();
+                isAudioPlaying = false;
+            }
+
+            selectedFile = null;
+            audioElement = null;
+            fileInput.value = '';
+            previewArea.classList.add('hidden');
+            previewArea.classList.remove('fade-in');
+
+            uploadButton.disabled = true;
+        });
+
+        uploadButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (!selectedFile) {
+                alert('Please select an audio file first!');
+                return;
+            }
+
+            if (!selectedFile.type.startsWith('audio/')) {
+                alert('Only audio files are allowed!');
+                return;
+            }
+
+            if (selectedFile.size > 4.5 * 1024 * 1024) {
+                alert('File too large! Maximum 4.5 MB');
+                return;
+            }
+
+            if (audioElement && isAudioPlaying) {
+                audioElement.pause();
+                isAudioPlaying = false;
+            }
+
+            uploadButton.disabled = true;
+            loadingIndicator.classList.remove('hidden');
+
+            setTimeout(() => {
+                uploadForm.submit();
+            }, 500);
+        });
+
+        uploadForm.addEventListener('submit', (e) => {
+            if (!selectedFile) {
+                e.preventDefault();
+                alert('No file selected for upload!');
+                return;
+            }
+        });
+
+        uploadForm.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                e.stopPropagation();
+                alert('Please use the "Identify" button to upload the file.');
+            }
+        });
+
+        uploadForm.addEventListener('click', (e) => {
+            if (e.target !== uploadButton && !uploadButton.contains(e.target)) {
+                e.stopPropagation();
+            }
+        });
+
+        uploadForm.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        function init() {
+            initTheme();
+            uploadButton.disabled = true;
+        }
+
+        init();
+
+        document.addEventListener('DOMContentLoaded', initTheme);
+    </script>
+</body>
+</html>
